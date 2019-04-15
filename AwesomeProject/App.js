@@ -19,7 +19,7 @@
 });
 
  type Props = {};
- export default class HomeView extends Component<Props> {
+ export default class App extends Component<Props> {
     render() {
 
         let pic = {
@@ -28,9 +28,11 @@
 
         return (
             <View style={styles.container}>
-            <View style={{width: 50, height: 50, backgroundColor: 'powderblue'}}/>
+            <Image source={pic} style={{height: 100}}/>
+            <Blink text='I love to blink' myprops='my test props'/>
+            {/*<View style={{width: 100, height: 50, backgroundColor: 'powderblue'}}/>
             <View style={{height: 50, backgroundColor: 'skyblue'}}/>
-            <View style={{height: 50, backgroundColor: 'steelblue'}}/>
+            <View style={{height: 50, backgroundColor: 'steelblue'}}/>*/}
             </View>
             );
     }
@@ -39,7 +41,7 @@
 class Blink extends Component {
     constructor(props) {
         super(props);
-        this.state = { isShowingText: true };
+        this.state = { isShowingText: true, test: '123'};
 
         // 每1000毫秒对showText状态做一次取反操作
         setInterval(() => {
@@ -55,48 +57,51 @@ class Blink extends Component {
         }
 
         return (
-            <Text>{this.props.text}</Text>
-            );
-        }
-
-    }
-
-    class GreetingList extends Component {
-        render() {
-            return (
             <View style={{alignItems: 'center'}}>
-            <Text>Hello {this.props.name}!</Text>
+            <Text>{this.props.text}</Text>
+            <Text>{this.state.test}</Text>
             </View>
             );
         }
+
     }
 
+class GreetingList extends Component {
+    render() {
+        return (
+        <View style={{alignItems: 'center'}}>
+        <Text>Hello {this.props.name}!</Text>
+        </View>
+        );
+    }
+}
 
 
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'stretch',
-            backgroundColor: '#FFFFFF',
-        },
-        welcome: {
-            fontSize: 20,
-            textAlign: 'center',
-            margin: 10,
-            color: 'red',
-        },
-        instructions: {
-            textAlign: 'center',
-            color: '#333333',
-            marginBottom: 5,
-        },
-        hello: {
-            color: 'red',
-        },
-        pic: {
-            width: 193,
-            height: 110,
-        }
-    });
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+    },
+    welcome: {
+        fontSize: 20,
+        textAlign: 'center',
+        margin: 10,
+        color: 'red',
+    },
+    instructions: {
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 5,
+    },
+    hello: {
+        color: 'red',
+    },
+    pic: {
+        width: 193,
+        height: 110,
+    }
+});

@@ -181,5 +181,7 @@ node_modules
 /bots/node_modules/
 package-lock.json
 
+*.jsbundle
+
 
 
