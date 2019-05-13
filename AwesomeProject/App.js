@@ -1,107 +1,127 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- * @lint-ignore-every XPLATJSCOPYRIGHT1
- */
+import React, {Component} from "react";
+import {Image, StyleSheet, Text, View, FlatList} from "react-native";
 
-
- import React, {Component} from 'react';
- import {Platform, StyleSheet, Text, View, Image} from 'react-native';
-
- const instructions = Platform.select({
-    ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-    android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
- type Props = {};
- export default class App extends Component<Props> {
-    render() {
-
-        let pic = {
-            uri: 'http://www.gratuit-en-ligne.com/telecharger-gratuit-en-ligne/telecharger-image-wallpaper-gratuit/image-wallpaper-animaux/img/images/image-wallpaper-animaux-autruche.jpg'
-        };
-
-        return (
-            <View style={styles.container}>
-            <Image source={pic} style={{height: 100}}/>
-            <Blink text='I love to blink' myprops='my test props'/>
-            {/*<View style={{width: 100, height: 50, backgroundColor: 'powderblue'}}/>
-            <View style={{height: 50, backgroundColor: 'skyblue'}}/>
-            <View style={{height: 50, backgroundColor: 'steelblue'}}/>*/}
-            </View>
-            );
+var MOCKED_MOVIES_DATA = [
+    {
+        title: "标题",
+        year: "2015",
+        posters: {thumbnail: "https://i.imgur.com/UePbdph.jpg"}
     }
-}
+];
 
-class Blink extends Component {
+var REQUEST_URL =
+    "https://raw.githubusercontent.com/facebook/react-native/0.51-stable/docs/MoviesExample.json";
+
+export default class App extends Component {
+
     constructor(props) {
         super(props);
-        this.state = { isShowingText: true, test: '123'};
+        this.state = {
+            data: [],
+            loaded: false,
+        };
 
-        // 每1000毫秒对showText状态做一次取反操作
-        setInterval(() => {
-            this.setState(previousState => {
-                return {isShowingText: !previousState.isShowingText};
+        // 在ES6中，如果在自定义的函数里使用了this关键字，则需要对其进行“绑定”操作，否则this的指向不对
+        // 像下面这行代码一样，在constructor中使用bind是其中一种做法（还有一些其他做法，如使用箭头函数等）
+        this.fetchData = this.fetchData.bind(this);
+    }
+
+    componentDidMount() {
+        this.fetchData();
+    }
+
+    fetchData() {
+        fetch(REQUEST_URL)
+            .then(response => response.json())
+            .then(responseData => {
+
+                console.log(responseData);
+
+                // 注意，这里使用了this关键字，为了保证this在调用时仍然指向当前组件，我们需要对其进行“绑定”操作
+                this.setState({
+                    data: this.state.data.concat(responseData.movies),
+                    loaded: true,
+                });
             });
-        }, 1000);
     }
 
+
     render() {
-        if (!this.state.isShowingText) {
-            return null;
+
+        if (!this.state.loaded) {
+            return this.renderLoadingView();
         }
 
         return (
-            <View style={{alignItems: 'center'}}>
-            <Text>{this.props.text}</Text>
-            <Text>{this.state.test}</Text>
+            <FlatList
+                data={this.state.data}
+                renderItem={this.renderMovie}
+                style={styles.list}
+                keyExtractor={item => item.id}
+            />
+        );
+    }
+
+    renderLoadingView() {
+        return (
+            <View style={styles.loading}>
+                <Text>正在加载电影数据...... </Text>
             </View>
-            );
-        }
-
+        );
     }
 
-class GreetingList extends Component {
-    render() {
+    renderMovie({item}) {
         return (
-        <View style={{alignItems: 'center'}}>
-        <Text>Hello {this.props.name}!</Text>
-        </View>
+            <View style={styles.container}>
+                <Image source={{uri: item.posters.thumbnail}} style={styles.thumbnail}></Image>
+                <View style={styles.rightContainer}>
+                    <Text style={styles.title}>{item.title}</Text>
+                    <Text style={styles.year}>{item.year}</Text>
+                </View>
+            </View>
         );
     }
 }
 
-
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexDirection: 'row',
+        justifyContent: "flex-start",
+        alignItems: "center",
+        backgroundColor: "#F5FCFF"
+    },
+
+    rightContainer: {
+        flex: 1,
         flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
     },
-    welcome: {
-        fontSize: 20,
+
+    loading: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#F5FCFF"
+    },
+
+    thumbnaiheight: 81
+    },
+
+    title: {
+        marginLeft: 10,
+        marginRight: 10,
+        fontSize: 14,
+        marginBottom: 8,
         textAlign: 'center',
-        margin: 10,
-        color: 'red',
     },
-    instructions: {
+
+    year: {
         textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
     },
-    hello: {
-        color: 'red',
+
+    list: {
+        marginTop: 44,
+        backgroundColor: "#F5FCFF",
     },
-    pic: {
-        width: 193,
-        height: 110,
-    }
 });
